@@ -160,6 +160,7 @@
       // closing connection to remote server
       var closeConnection = function(callback) {
         connection.end();
+        callback();
       };
 
 
@@ -182,8 +183,11 @@
         changeSymLink,
         localCleanup,
         executePostCommands,
-        closeConnection
+        closeConnection,
+        done
       ]);
+
+
     };
   });
 };
