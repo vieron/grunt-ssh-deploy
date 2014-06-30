@@ -44,20 +44,20 @@
       var sys = require('sys')
       var childProcessExec = require('child_process').exec;
       var child;
-      
+
       var execLocal = function(cmd, next) {
-        var nextFun = next; 
+        var nextFun = next;
         childProcessExec(cmd, function(err, stdout, stderr){
-          grunt.log.debug(cmd); 
+          grunt.log.debug(cmd);
           grunt.log.debug('stdout: ' + stdout);
           grunt.log.debug('stderr: ' + stderr);
           if (err !== null) {
             grunt.log.errorlns('exec error: ' + err);
-          }    
-          nextFun(); 
+          }
+          nextFun();
         });
       };
-      
+
       // executes a remote command via ssh
       var exec = function(cmd, showLog, next){
         connection.exec(cmd, function(err, stream) {
@@ -93,7 +93,7 @@
             excludeList += " --exclude='./" + item + "'";
           });
         }
-        var command = "tar -czvf deploy.tgz ." + excludeList;
+        var command = "tar -cz" + excludeList + " -f deploy.tgz .";
         execLocal(command, callback);
       };
       // upload zipfile to server via scp
@@ -111,7 +111,6 @@
         var untar = "tar -xzvf deploy.tgz";
         var cleanup = "rm " + options.deploy_path + "/releases/" + timeStamp + "/deploy.tgz";
         var command = goToCurrent + " && " + untar + " && " + cleanup;
-        console.log(callback)
         exec(command, options.debug, callback);
       };
 
@@ -144,7 +143,7 @@
         var command = 'rm deploy.tgz';
         execLocal(command, callback);
       };
-      
+
       // executing post commands on remote machine
       var executePostCommands = function(callback) {
         if (options.cmds_after_deploy) {
@@ -174,8 +173,8 @@
        *
        ---------------------------------------*/
       async.series([
-        executeBeforeTasks, 
-        createReleaseFolder, 
+        executeBeforeTasks,
+        createReleaseFolder,
         zipContentForDeployment,
         uploadZipFile,
         unzipOnRemote,
